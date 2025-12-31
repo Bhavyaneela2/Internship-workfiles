@@ -41,18 +41,17 @@
     <!-- Navigation -->
     <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <span class="text-2xl font-bold text-brand-red">UDAAN</span>
-                    <span class="ml-2 text-sm text-gray-500 font-medium tracking-widest hidden sm:block">SOCIETY</span>
+            <div class="flex">
+                <div class="flex-shrink-0 flex items-center">
+                    <img src="{% static 'img/logo.png' %}" alt="UDAAN Society" class="h-12 w-auto mr-3">
+                    <span class="font-bold text-2xl text-brand-red tracking-tight">Blood Request</span>
                 </div>
-                <!-- Mobile menu button etc. can go here -->
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="min-h-screen">
+    <main class="flex-grow">
         {% block content %}{% endblock %}
     </main>
 
@@ -98,8 +97,7 @@
                     <!-- Brand -->
                     <div>
                         <div class="flex items-center mb-6">
-                            <!-- Placeholder Logo -->
-                            <div class="h-10 w-10 bg-gray-300 rounded-full mr-3"></div>
+                            <img src="{% static 'img/logo.png' %}" alt="UDAAN Society" class="h-12 w-auto mr-3">
                             <span class="text-xl font-bold text-gray-900">UDAAN Society</span>
                         </div>
                         <p class="text-gray-500 text-sm leading-relaxed mb-6">

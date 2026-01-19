@@ -151,4 +151,35 @@ def update_task_status(request, pk):
         task.status = 'To Do'
         
     task.save()
+    task.save()
     return redirect('staff_dashboard')
+
+from django.contrib.auth.decorators import user_passes_test
+
+def is_manager(user):
+    return user.is_superuser or user.groups.filter(name='Managers').exists()
+
+@user_passes_test(is_manager)
+def manager_dashboard(request):
+    """
+    Manager Dashboard: View ALL tasks across the organization.
+    """
+    # Order by Priority (Critical first)
+    # Since priority is text, we might want custom sorting, but simple string sort
+    # works if Critical > High > Low... wait C > H > L. Alphabetical is C, H, L, M. 
+    # Critical should be top.
+    # Ideally we use an IntegerField for sorting, but for now we'll just fetch all.
+    tasks = Task.objects.all().order_by('status', '-created_at') 
+    
+    # Simple stats
+    stats = {
+        'total': tasks.count(),
+        'high_priority': tasks.filter(priority__in=['High', 'Critical']).count(),
+        'pending': tasks.filter(status__in=['To Do', 'In Progress']).count()
+    }
+
+    context = {
+        'tasks': tasks,
+        'stats': stats
+    }
+    return render(request, 'manager_dashboard.html', context)

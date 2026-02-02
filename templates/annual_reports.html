@@ -10,7 +10,8 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section" style="background-image: url('https://udaansociety.org/static/assets/img/hero-bg.jpg');">
+<section class="hero">
+    <div class="hero-overlay"></div>
     <div class="hero-content">
         <h1>Annual Reports</h1>
         <p>Transparency and Accountability in our journey.</p>
@@ -18,8 +19,10 @@
 </section>
 
 <!-- Breadcrumbs -->
-<div class="container breadcrumbs">
-    <p><a href="{% url 'home' %}">Home</a> > <span class="current">Annual Reports</span></p>
+<div class="breadcrumb">
+    <div class="container">
+        Home <span>&raquo;</span> Annual Reports
+    </div>
 </div>
 
 <!-- Main Content -->

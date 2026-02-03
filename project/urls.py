@@ -15,6 +15,7 @@ urlpatterns = [
     path("campaigns/", campaign_list, name="campaign_list"),
     path("projects/", project_list, name="project_list"),
     path("projects/<slug:slug>/", project_detail, name="project_detail"),
+    path("blogs/", lambda request: render(request, "blogs.html"), name="blogs"),
     path("reports/", report_list, name="report_list"),
     path("blood-request/", include("blood_request.urls")),
     

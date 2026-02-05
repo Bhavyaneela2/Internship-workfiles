@@ -5,4 +5,7 @@ urlpatterns = [
     path('api/register/', views.register_donor, name='register_donor'),
     path('api/search/', views.search_donors, name='search_donors'),
     path('projects/', views.projects_page, name='projects'),
-]
+    path('reports/', views.report_list, name='report_list'),
+    path('blogs/<int:id>/', views.blog_detail, name='blog_detail'),
+
+    ]

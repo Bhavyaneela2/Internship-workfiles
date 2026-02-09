@@ -12,6 +12,7 @@ urlpatterns = [
     path("admin/portal/", staff_dashboard, name="staff_dashboard"),
     
     path("admin/", admin.site.urls),
+    path("", home_view, name="home"),
     path("campaigns/", campaign_list, name="campaign_list"),
     path("projects/", project_list, name="project_list"),
     path("projects/<slug:slug>/", project_detail, name="project_detail"),

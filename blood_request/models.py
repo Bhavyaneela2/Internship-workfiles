@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 
 class BloodDonor(models.Model):
     BLOOD_GROUP_CHOICES = [
@@ -71,7 +71,7 @@ class Project(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True, null=True) # Will populate via migration
     description = models.TextField(help_text="Short excerpt for the card")
-    content = RichTextField(blank=True, help_text="Full HTML content for the detail page")
+    content = CKEditor5Field(blank=True, help_text="Full HTML content for the detail page", config_name='extends')
     image = models.ImageField(upload_to='projects/')
     date = models.DateField()
     managers = models.ManyToManyField(User, related_name='managed_projects', blank=True, help_text="Managers responsible for this project")
@@ -223,7 +223,7 @@ class PersonalNote(models.Model):
         return f"Note for {self.user.username}"
 class Blog(models.Model):
     title = models.CharField(max_length=200)
-    content = RichTextField()   # <-- RichTextEditor
+    content = CKEditor5Field(config_name='extends')   # <-- RichTextEditor
     description = models.TextField()
     image = models.ImageField(upload_to='blogs/')
     created_at = models.DateTimeField(auto_now_add=True)

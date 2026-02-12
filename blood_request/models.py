@@ -18,6 +18,7 @@ class BloodDonor(models.Model):
     state = models.CharField(max_length=100)
     pin_code = models.CharField(max_length=10)
     consent_given = models.BooleanField(default=False)
+    last_donation_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

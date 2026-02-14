@@ -490,3 +490,7 @@ def calendar_events_api(request):
         })
 
     return JsonResponse(events, safe=False)
+
+
+def workplace_living(request):
+    return render(request, 'workplace_living.html')

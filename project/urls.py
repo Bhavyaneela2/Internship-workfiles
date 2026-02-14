@@ -26,7 +26,7 @@ urlpatterns = [
     path("reports/", report_list, name="report_list"),
     path("blood-request/", include("blood_request.urls")),
     path('', include('blood_request.urls')),
-    
+    path('workplace-living/', views.workplace_living, name='workplace_living'),
     path("ckeditor5/", include('django_ckeditor_5.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

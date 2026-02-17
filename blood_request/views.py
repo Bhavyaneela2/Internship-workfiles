@@ -165,28 +165,59 @@ from django.views.decorators.http import require_POST
 @require_POST
 def update_task_status(request, pk):
     from django.utils import timezone
+    import json
+    
+    # Check if this is an AJAX/JSON request
+    is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json'
+    
     task = get_object_or_404(Task, pk=pk, assigned_to=request.user)
     
-    # Get GPS data if provided
-    lat = request.POST.get('lat')
-    lng = request.POST.get('lng')
-
-    # Simple Toggle for now: To Do -> In Progress -> Done -> To Do
-    if task.status == 'To Do':
-        task.status = 'In Progress'
-    elif task.status == 'In Progress':
-        task.status = 'Done'
-        # Only save completion data when marking as Done
-        if lat and lng:
-            task.completion_lat = lat
-            task.completion_lng = lng
-        task.completion_timestamp = timezone.now()
+    new_status = None
+    
+    if is_ajax:
+        try:
+            data = json.loads(request.body)
+            new_status = data.get('status')
+            
+            # GPS data from AJAX
+            lat = data.get('lat')
+            lng = data.get('lng')
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
     else:
-        task.status = 'To Do'
-        # specific logic for re-opening? maybe clear completion data?
-        # for now, keep history.
+        # Form submission
+        lat = request.POST.get('lat')
+        lng = request.POST.get('lng')
+
+    # Logic
+    if new_status:
+        # Direct status update (Drag & Drop)
+        if new_status in ['To Do', 'In Progress', 'Done']:
+            task.status = new_status
+            if new_status == 'Done':
+                task.completion_timestamp = timezone.now()
+                if lat and lng:
+                    task.completion_lat = lat
+                    task.completion_lng = lng
+    else:
+        # Toggle logic (Legacy/Button)
+        if task.status == 'To Do':
+            task.status = 'In Progress'
+        elif task.status == 'In Progress':
+            task.status = 'Done'
+            # Only save completion data when marking as Done
+            if lat and lng:
+                task.completion_lat = lat
+                task.completion_lng = lng
+            task.completion_timestamp = timezone.now()
+        else:
+            task.status = 'To Do'
         
     task.save()
+    
+    if is_ajax:
+        return JsonResponse({'status': 'success', 'new_status': task.status, 'task_id': task.pk})
+    
     return redirect('staff_dashboard')
 
 from django.contrib.auth.decorators import user_passes_test

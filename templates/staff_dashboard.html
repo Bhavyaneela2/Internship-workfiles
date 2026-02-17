@@ -127,102 +127,139 @@
         <div id='calendar'></div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-250px)]">
 
         <!-- TO DO COLUMN -->
-        <div class="bg-gray-100 rounded-xl p-4">
-            <h3 class="text-gray-500 font-bold uppercase text-sm mb-4 flex justify-between">
-                To Do <span class="bg-gray-200 px-2 rounded-full text-xs py-1">{{ todo_tasks|length }}</span>
-            </h3>
-            <div class="space-y-4">
+        <div class="bg-gray-100 rounded-xl flex flex-col h-full ring-4 ring-gray-100/50">
+            <div
+                class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-100 rounded-t-xl sticky top-0 z-10">
+                <h3 class="text-gray-500 font-bold uppercase text-sm flex items-center">
+                    To Do <span class="ml-2 bg-gray-200 px-2 rounded-full text-xs py-1 text-gray-600 count-badge">{{
+                        todo_tasks|length }}</span>
+                </h3>
+                <button class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div id="todo-list" class="flex-1 p-3 overflow-y-auto space-y-3 task-container" data-status="To Do">
                 {% for task in todo_tasks %}
-                <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-gray-400 hover:shadow-md transition">
+                <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 cursor-grab hover:shadow-md transition-shadow group task-card relative"
+                    data-id="{{ task.pk }}">
                     <div class="flex justify-between items-start mb-2">
-                        <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider
-                                {% if task.priority == 'Critical' %} bg-red-100 text-red-700
-                                {% elif task.priority == 'High' %} bg-orange-100 text-orange-700
-                                {% elif task.priority == 'Medium' %} bg-blue-100 text-blue-700
-                                {% else %} bg-gray-100 text-gray-600 {% endif %}">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
+                                {% if task.priority == 'Critical' %} bg-red-50 text-red-600 border border-red-100
+                                {% elif task.priority == 'High' %} bg-orange-50 text-orange-600 border border-orange-100
+                                {% elif task.priority == 'Medium' %} bg-blue-50 text-blue-600 border border-blue-100
+                                {% else %} bg-gray-50 text-gray-500 border border-gray-100 {% endif %}">
                             {{ task.priority }}
                         </span>
-                        <span class="text-xs text-gray-400">{{ task.due_date|date:"M d" }}</span>
+                        {% if task.due_date %}
+                        <span
+                            class="text-[10px] {% if task.is_overdue %}text-red-500 font-bold{% else %}text-gray-400{% endif %} flex items-center">
+                            {% if task.is_overdue %}
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {% endif %}
+                            {{ task.due_date|date:"M d" }}
+                        </span>
+                        {% endif %}
                     </div>
-                    <h4 class="font-bold text-gray-800 mb-1">{{ task.title }}</h4>
-                    {% if task.remarks %}
-                    <p class="text-xs text-gray-500 mb-3">{{ task.remarks|truncatechars:60 }}</p>
-                    {% endif %}
 
-                    <form action="{% url 'update_task_status' task.pk %}" method="POST" class="mt-3">
-                        {% csrf_token %}
-                        <button type="submit"
-                            class="w-full py-2 bg-blue-50 text-blue-600 rounded-md text-xs font-bold hover:bg-blue-100 transition">
-                            Start Working &rarr;
-                        </button>
-                    </form>
+                    <h4 class="font-semibold text-gray-800 text-sm mb-1 leading-tight">{{ task.title }}</h4>
+
+                    <div class="flex justify-between items-end mt-3">
+                        <div class="flex -space-x-2">
+                            {% if task.assigned_to %}
+                            <div class="w-6 h-6 rounded-full bg-brand-dark text-white flex items-center justify-center text-[10px] font-bold ring-2 ring-white"
+                                title="{{ task.assigned_to.username }}">
+                                {{ task.assigned_to.username|slice:":1"|upper }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="text-xs text-gray-400 font-mono">#{{ task.pk }}</div>
+                    </div>
                 </div>
                 {% empty %}
-                <div class="text-center py-8 text-gray-400 text-sm">No pending tasks</div>
+                <div
+                    class="empty-placeholder text-center py-10 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+                    No tasks to do
+                </div>
                 {% endfor %}
             </div>
         </div>
 
         <!-- IN PROGRESS COLUMN -->
-        <div class="bg-blue-50 rounded-xl p-4">
-            <h3 class="text-blue-500 font-bold uppercase text-sm mb-4 flex justify-between">
-                In Progress <span class="bg-blue-200 px-2 rounded-full text-xs py-1 text-blue-800">{{
-                    inprogress_tasks|length }}</span>
-            </h3>
-            <div class="space-y-4">
+        <div class="bg-blue-50/50 rounded-xl flex flex-col h-full ring-4 ring-blue-50">
+            <div
+                class="p-4 border-b border-blue-100 flex justify-between items-center bg-blue-50 rounded-t-xl sticky top-0 z-10">
+                <h3 class="text-blue-700 font-bold uppercase text-sm flex items-center">
+                    In Progress <span
+                        class="ml-2 bg-blue-100 px-2 rounded-full text-xs py-1 text-blue-700 count-badge">{{
+                        inprogress_tasks|length }}</span>
+                </h3>
+            </div>
+
+            <div id="inprogress-list" class="flex-1 p-3 overflow-y-auto space-y-3 task-container"
+                data-status="In Progress">
                 {% for task in inprogress_tasks %}
-                <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-blue-500 hover:shadow-md transition">
+                <div class="bg-white p-3 rounded-lg shadow-sm border-l-4 border-blue-500 cursor-grab hover:shadow-md transition-shadow task-card"
+                    data-id="{{ task.pk }}">
                     <div class="flex justify-between items-start mb-2">
-                        <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider
-                                {% if task.priority == 'Critical' %} bg-red-100 text-red-700
-                                {% elif task.priority == 'High' %} bg-orange-100 text-orange-700 (High)
-                                {% else %} bg-blue-100 text-blue-700 {% endif %}">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
+                                {% if task.priority == 'Critical' %} bg-red-50 text-red-600
+                                {% else %} bg-blue-50 text-blue-600 {% endif %}">
                             {{ task.priority }}
                         </span>
-                        <span class="text-xs text-blue-500 font-bold">Active</span>
+                        <div class="animate-pulse w-2 h-2 bg-blue-500 rounded-full"></div>
                     </div>
-                    <h4 class="font-bold text-gray-800 mb-1">{{ task.title }}</h4>
-                    <p class="text-xs text-gray-500 mb-3">{{ task.description|truncatechars:50 }}</p>
+                    <h4 class="font-semibold text-gray-800 text-sm mb-1 leading-tight">{{ task.title }}</h4>
+                    <p class="text-xs text-gray-500 mt-1 line-clamp-2">{{ task.description|default:"" }}</p>
 
-                    <form action="{% url 'update_task_status' task.pk %}" method="POST" class="mt-3 task-form">
-                        {% csrf_token %}
-                        <input type="hidden" name="lat" class="gps-lat">
-                        <input type="hidden" name="lng" class="gps-lng">
-                        <button type="submit" onclick="captureLocation(event, this)"
-                            class="w-full py-2 bg-green-50 text-green-600 rounded-md text-xs font-bold hover:bg-green-100 transition">
-                            Mark Done &check;
-                        </button>
-                    </form>
+                    <div class="flex justify-between items-end mt-3">
+                        <span class="text-[10px] text-gray-400">Started {{ task.updated_at|timesince }} ago</span>
+                        <div class="text-xs text-gray-400 font-mono">#{{ task.pk }}</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div
+                    class="empty-placeholder text-center py-10 text-gray-400 text-sm border-2 border-dashed border-blue-200 rounded-lg">
+                    Drag tasks here
                 </div>
                 {% endfor %}
             </div>
         </div>
 
         <!-- DONE COLUMN -->
-        <div class="bg-green-50 rounded-xl p-4">
-            <h3 class="text-green-600 font-bold uppercase text-sm mb-4 flex justify-between">
-                Completed <span class="bg-green-200 px-2 rounded-full text-xs py-1 text-green-800">{{ done_tasks|length
-                    }}</span>
-            </h3>
-            <div class="space-y-4">
+        <div class="bg-green-50/50 rounded-xl flex flex-col h-full ring-4 ring-green-50">
+            <div
+                class="p-4 border-b border-green-100 flex justify-between items-center bg-green-50 rounded-t-xl sticky top-0 z-10">
+                <h3 class="text-green-700 font-bold uppercase text-sm flex items-center">
+                    Done <span class="ml-2 bg-green-100 px-2 rounded-full text-xs py-1 text-green-700 count-badge">{{
+                        done_tasks|length }}</span>
+                </h3>
+            </div>
+
+            <div id="done-list" class="flex-1 p-3 overflow-y-auto space-y-3 task-container" data-status="Done">
                 {% for task in done_tasks %}
-                <div
-                    class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-green-500 opacity-75 hover:opacity-100 transition">
+                <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 opacity-60 hover:opacity-100 transition-opacity cursor-grab task-card"
+                    data-id="{{ task.pk }}">
                     <div class="flex justify-between items-start mb-2">
-                        <span class="text-xs text-green-600 font-bold strike-through">Completed</span>
+                        <span class="text-[10px] text-green-600 font-bold flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Completed
+                        </span>
                         <span class="text-[10px] text-gray-400">{{ task.updated_at|date:"M d" }}</span>
                     </div>
-                    <h4 class="font-medium text-gray-500 line-through mb-1">{{ task.title }}</h4>
-
-                    <form action="{% url 'update_task_status' task.pk %}" method="POST" class="mt-2">
-                        {% csrf_token %}
-                        <button type="submit" class="text-xs text-gray-400 hover:text-gray-600 underline">
-                            Re-open
-                        </button>
-                    </form>
+                    <h4 class="font-medium text-gray-500 line-through text-sm mb-1">{{ task.title }}</h4>
                 </div>
                 {% endfor %}
             </div>
@@ -231,8 +268,11 @@
     </div>
 </section>
 
+<!-- SortableJS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Initialize Calendar
         var calendarEl = document.getElementById('calendar');
         if (calendarEl) {
             var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -249,57 +289,107 @@
             });
             calendar.render();
         }
-    });
 
-    function captureLocation(event, btn) {
-        // Find the form that contains the clicked button
-        // Note: btn is the submit button passed via 'this'
-        const form = btn.closest('form');
+        // Initialize Kanban
+        const containers = document.querySelectorAll('.task-container');
 
-        // Find the hidden inputs within that form by name attribute
-        const latInput = form.querySelector('input[name="lat"]');
-        const lngInput = form.querySelector('input[name="lng"]');
+        containers.forEach(container => {
+            new Sortable(container, {
+                group: 'kanban', // Shared list
+                animation: 150,
+                ghostClass: 'bg-indigo-50',
+                dragClass: 'opacity-100',
+                onEnd: function (evt) {
+                    const itemEl = evt.item;
+                    const newStatus = evt.to.getAttribute('data-status');
+                    const taskId = itemEl.getAttribute('data-id');
+                    const oldStatus = evt.from.getAttribute('data-status');
 
-        // Only intecept if this form has GPS inputs (e.g. the Mark Done form)
-        if (latInput && lngInput) {
-            event.preventDefault(); // Stop form submission
+                    // If dropped in same list, do nothing contextually (reorder not impl yet)
+                    if (evt.from === evt.to) return;
 
-            // Update button text to give feedback
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Locating...';
-            btn.disabled = true;
+                    // Handle placehoder visibility
+                    checkEmptyState(evt.from);
+                    checkEmptyState(evt.to);
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        // Success: Set inputs
-                        latInput.value = position.coords.latitude;
-                        lngInput.value = position.coords.longitude;
+                    // Update Badges
+                    updateBadge(evt.from);
+                    updateBadge(evt.to);
 
-                        btn.innerHTML = 'Submitting...';
-                        form.submit();
-                    },
-                    (error) => {
-                        // Error: Log and alert
-                        console.warn("GPS Error: " + error.message);
-                        alert("⚠️ Location access is needed to mark tasks as Done.\n\nProceeding without location data.");
+                    // AJAX Update
+                    updateTaskStatus(taskId, newStatus);
+                }
+            });
+            // Initial check
+            checkEmptyState(container);
+        });
 
-                        // Fallback: Submit without location
-                        btn.innerHTML = 'Submitting...';
-                        form.submit();
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 0
-                    }
-                );
+        function checkEmptyState(container) {
+            const items = container.querySelectorAll('.task-card');
+            const placeholder = container.querySelector('.empty-placeholder');
+            if (items.length === 0) {
+                if (placeholder) placeholder.style.display = 'block';
             } else {
-                alert("Geolocation is not supported by this browser.");
-                form.submit(); // Submit anyway if not supported
+                if (placeholder) placeholder.style.display = 'none';
             }
         }
-        // Else let the form submit normally (e.g. "Start Working" button)
+
+        function updateBadge(container) {
+            const count = container.querySelectorAll('.task-card').length;
+            const header = container.previousElementSibling; // header div
+            const badge = header.querySelector('.count-badge');
+            if (badge) badge.innerText = count;
+        }
+
+        function updateTaskStatus(taskId, status) {
+            const payload = { status: status };
+
+            // If dragging to Done, start getting location in background (optional)
+            if (status === 'Done' && navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        payload.lat = pos.coords.latitude;
+                        payload.lng = pos.coords.longitude;
+                        sendUpdate(taskId, payload);
+                    },
+                    (err) => {
+                        console.warn("GPS failed, sending without:", err);
+                        sendUpdate(taskId, payload);
+                    },
+                    { timeout: 5000 }
+                );
+            } else {
+                sendUpdate(taskId, payload);
+            }
+        }
+
+        function sendUpdate(taskId, payload) {
+            fetch(`/admin/portal/task/${taskId}/update/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(payload)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        console.log('Task updated:', data);
+                        // Optional: Toast notification
+                    } else {
+                        alert('Failed to update task status.');
+                        // Revert UI? (Complex, skipping for prototype)
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+
+    // Re-use captureLocation for button based interactions if any remain
+    function captureLocation(event, btn) {
+        // ... (Legacy code support if needed) ...
     }
 </script>
 {% endblock %}

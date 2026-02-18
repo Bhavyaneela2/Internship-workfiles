@@ -36,5 +36,6 @@ urlpatterns = [
     path('', include('blood_request.urls')),
     path('workplace-living/', views.workplace_living, name='workplace_living'),
     path("ckeditor5/", include('django_ckeditor_5.urls')),
+     path('volunteering/', views.volunteering, name='volunteering'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

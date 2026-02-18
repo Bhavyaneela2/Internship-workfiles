@@ -537,6 +537,7 @@ def calendar_events_api(request):
 def workplace_living(request):
     return render(request, 'workplace_living.html')
 
+
 # --- Phase 17: Team Views ---
 from .models import Team, SharedNote
 from django.contrib import messages
@@ -750,3 +751,7 @@ def user_edit_portal(request, pk):
         return redirect('user_list')
         
     return render(request, 'blood_request/user_edit.html', {'target_user': user_obj})
+
+def volunteering(request):
+    return render(request, "volunteering.html")
+

@@ -837,3 +837,5 @@ def campus_ambassador(request):
         }
     )
 
+def jobs(request):
+    return render(request, "jobs.html")

@@ -27,6 +27,8 @@ urlpatterns = [
         views.campus_ambassador,
         name='campus_ambassador'
     ),
+    path("jobs/", views.jobs, name="jobs"),
+
     # path(
     #     'ambassador/<int:id>/',
     #     views.ambassador_detail,

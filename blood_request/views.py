@@ -839,9 +839,14 @@ def campus_ambassador(request):
         }
     )
 
+<<<<<<< HEAD
+def jobs(request):
+    return render(request, "jobs.html")
+=======
 def news_clippings(request):
     from .models import NewsClipping
     clippings = NewsClipping.objects.all().order_by('-created_at')
     return render(request, 'news_clippings.html', {'clippings': clippings})
 
 
+>>>>>>> 0e025d3c7781009c65a8f77b98dd8289d2891732

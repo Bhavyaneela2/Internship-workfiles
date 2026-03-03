@@ -81,3 +81,41 @@ This document tracks the implementation status of the Project Management (PM) an
 ### Omnichannel Alerts
 - [ ] **Notification Center**: Centralized module for routing alerts.
 - [ ] **Multi-Channel**: SMS (Twilio), WhatsApp, and Email support.
+
+
+Phase 25: The Notion-Style Workspace (Collaboration & Docs)
+ Slash Commands (/) in Notes
+ Integrate custom block editor or extend CKEditor
+ Implement UI popover for / command
+ Action: Insert Task, Insert Table, Insert File
+ Team Wikis & Knowledge Bases
+ Add parent/child hierarchy to SharedNote
+ UI for Wiki navigation sidebar
+ Database Multi-Views
+ Implement List/Calendar/Gallery views alongside Kanban
+Phase 26: The Zoho-Style CRM (Relationships)
+ Donor Pipelines / Funnels
+ Design pipeline stages (New, Nurture, Retain)
+ Interactive Drag-and-Drop Pipeline View
+ Automated Communication (Drip)
+ Rule engine for time-delayed emails/WhatsApp
+ Omnichannel Inbox
+ Integrate Email/SMS sending from Donor profile
+ Donor Health Scoring (Zoho Zia)
+ Predictive script for retention likelihood
+Phase 27: The Biziverse-Style MIS (Analytics)
+ Custom Dashboard Builder
+ Draggable/Resizable widget grid for Managers
+ Advanced Audit Trails
+ Install/Configure django-simple-history
+ Audit log UI view
+ Expense Tracking
+ Create Expense model linked to Campaigns
+Phase 28: Immediate Wins (High Value / Low Effort)
+ Mentions (@username)
+ Parse @ in notes/comments
+ Trigger Portal Notification
+ Global Keyboard Shortcuts
+ Hotkey 'C' to open Quick Add Task modal
+ Recurring Tasks
+ Add recurrence logic/cron job for Ops workloads

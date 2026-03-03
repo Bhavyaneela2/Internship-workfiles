@@ -353,6 +353,16 @@ class SharedNote(models.Model):
     def __str__(self):
         return self.title
 
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications', help_text="User receiving the notification")
+    actor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='actions', help_text="User who triggered the notification")
+    message = models.CharField(max_length=255)
+    link = models.CharField(max_length=255, blank=True, null=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"To {self.user.username}: {self.message}"
 
 
 class CampusAmbassador(models.Model):

@@ -469,11 +469,23 @@
         }
 
         document.addEventListener('keydown', (e) => {
+            // Ignore keystrokes if the user is typing in an input or textarea
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
+                if (e.key === 'Escape') {
+                    closeQuickSwitcher();
+                }
+                return;
+            }
+
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
                 openQuickSwitcher();
             } else if (e.key === 'Escape') {
                 closeQuickSwitcher();
+            } else if (e.key === 'c' && !e.ctrlKey && !e.metaKey) {
+                // Quick Add hotkey 'c'
+                e.preventDefault();
+                window.location.href = "{% url 'task_create' %}";
             }
         });
 

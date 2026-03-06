@@ -154,6 +154,7 @@ def staff_dashboard(request):
         'todo_tasks': todo_tasks,
         'inprogress_tasks': inprogress_tasks,
         'done_tasks': done_tasks,
+        'all_tasks': all_tasks,
         'announcements': announcements,
         'total_donors': total_donors,
         'recent_activity': recent_activity,
@@ -1008,7 +1009,7 @@ class TaskListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Manage Tasks'
-        context['create_url'] = reverse_lazy('task_create_portal')
+        context['create_url'] = 'task_create_portal'
         context['update_url_name'] = 'task_update_portal'
         return context
 
@@ -1047,7 +1048,7 @@ class SubTaskListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Manage SubTasks'
-        context['create_url'] = reverse_lazy('subtask_create_portal')
+        context['create_url'] = 'subtask_create_portal'
         context['update_url_name'] = 'subtask_update_portal'
         return context
 

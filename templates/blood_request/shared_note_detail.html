@@ -57,13 +57,16 @@
     <form method="post" id="note-form" class="mb-10">
         {% csrf_token %}
         {{ form.media }}
-        
+
         <div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
             <div class="flex items-center space-x-4 text-sm text-gray-400">
-                <span class="flex items-center"><i class="fas fa-user mr-1.5 opacity-70"></i> {{ note.owner.username }}</span>
-                <span class="flex items-center"><i class="fas fa-history mr-1.5 opacity-70"></i> Updated {{ note.updated_at|timesince }} ago</span>
+                <span class="flex items-center"><i class="fas fa-user mr-1.5 opacity-70"></i> {{ note.owner.username
+                    }}</span>
+                <span class="flex items-center"><i class="fas fa-history mr-1.5 opacity-70"></i> Updated {{
+                    note.updated_at|timesince }} ago</span>
             </div>
-            <button type="submit" class="bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded hover:bg-gray-800 transition shadow-sm">
+            <button type="submit"
+                class="bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded hover:bg-gray-800 transition shadow-sm">
                 Save Changes
             </button>
         </div>
@@ -220,5 +223,285 @@
         padding: 0 !important;
         margin-bottom: 8px;
     }
+
+    /* Slash Command Menu */
+    #slash-menu {
+        position: absolute;
+        z-index: 10000;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        width: 250px;
+        max-height: 300px;
+        overflow-y: auto;
+        display: none;
+        flex-direction: column;
+        padding: 0.5rem 0;
+    }
+
+    .slash-menu-item {
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: background-color 0.1s;
+    }
+
+    .slash-menu-item:hover,
+    .slash-menu-item.active {
+        background-color: #f3f4f6;
+    }
+
+    .slash-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b7280;
+    }
+
+    .slash-text h4 {
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #111827;
+    }
+
+    .slash-text p {
+        margin: 0;
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
 </style>
+
+<!-- Custom Slash Command Menu HTML -->
+<div id="slash-menu">
+    <div class="px-3 py-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Basic Blocks</div>
+
+    <div class="slash-menu-item active" data-command="heading1">
+        <div class="slash-icon"><i class="fas fa-heading"></i></div>
+        <div class="slash-text">
+            <h4>Heading 1</h4>
+            <p>Big section heading.</p>
+        </div>
+    </div>
+
+    <div class="slash-menu-item" data-command="heading2">
+        <div class="slash-icon"><i class="fas fa-heading" style="font-size: 0.875rem"></i></div>
+        <div class="slash-text">
+            <h4>Heading 2</h4>
+            <p>Medium section heading.</p>
+        </div>
+    </div>
+
+    <div class="slash-menu-item" data-command="heading3">
+        <div class="slash-icon"><i class="fas fa-heading" style="font-size: 0.75rem"></i></div>
+        <div class="slash-text">
+            <h4>Heading 3</h4>
+            <p>Small section heading.</p>
+        </div>
+    </div>
+
+    <div class="slash-menu-item" data-command="bulletedList">
+        <div class="slash-icon"><i class="fas fa-list-ul"></i></div>
+        <div class="slash-text">
+            <h4>Bulleted List</h4>
+            <p>Create a simple bulleted list.</p>
+        </div>
+    </div>
+
+    <div class="slash-menu-item" data-command="todoList">
+        <div class="slash-icon"><i class="far fa-check-square"></i></div>
+        <div class="slash-text">
+            <h4>To-do List</h4>
+            <p>Track tasks with a to-do list.</p>
+        </div>
+    </div>
+
+    <div class="slash-menu-item" data-command="blockQuote">
+        <div class="slash-icon"><i class="fas fa-quote-right"></i></div>
+        <div class="slash-text">
+            <h4>Quote</h4>
+            <p>Capture a quote.</p>
+        </div>
+    </div>
+
+    <div class="px-3 py-1 mt-2 border-t border-gray-100 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+        Advanced</div>
+
+    <div class="slash-menu-item" data-command="insertTable">
+        <div class="slash-icon"><i class="fas fa-table"></i></div>
+        <div class="slash-text">
+            <h4>Table</h4>
+            <p>Add simple tabular content.</p>
+        </div>
+    </div>
+
+    <div class="slash-menu-item" data-command="codeBlock">
+        <div class="slash-icon"><i class="fas fa-code"></i></div>
+        <div class="slash-text">
+            <h4>Code</h4>
+            <p>Capture a code snippet.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Find the CKEditor instance 
+        let slashMenu = document.getElementById('slash-menu');
+        let menuItems = Array.from(document.querySelectorAll('.slash-menu-item'));
+        let selectedIndex = 0;
+        let isMenuOpen = false;
+        let ckeEditor = null;
+
+        let slashMarkerElement = null;
+
+        function updateMenuSelection() {
+            menuItems.forEach((item, index) => {
+                if (index === selectedIndex) {
+                    item.classList.add('active');
+                    item.scrollIntoView({ block: 'nearest' });
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        function closeMenu() {
+            slashMenu.style.display = 'none';
+            isMenuOpen = false;
+            selectedIndex = 0;
+            updateMenuSelection();
+        }
+
+        function openMenu(x, y) {
+            slashMenu.style.display = 'flex';
+            slashMenu.style.left = `${x}px`;
+            slashMenu.style.top = `${y + 25}px`;
+            isMenuOpen = true;
+            selectedIndex = 0;
+            updateMenuSelection();
+        }
+
+        function executeCommand(commandName) {
+            if (!ckeEditor) return;
+
+            // Re-focus editor to execute command properly
+            ckeEditor.editing.view.focus();
+
+            // First, remove the '/' that triggered the menu. 
+            // In CKEditor 5 we delete the last character typed.
+            ckeEditor.model.change(writer => {
+                const position = ckeEditor.model.document.selection.getFirstPosition();
+                // Move 1 position back and range to current position
+                const startPos = position.getShiftedBy(-1);
+                // If taking 1 step back is valid...
+                if (startPos) {
+                    const range = writer.createRange(startPos, position);
+                    // Check if it's actually our slash
+                    const textNode = Array.from(range.getItems()).find(item => item.is('$text'));
+                    if (textNode && textNode.data === '/') {
+                        writer.remove(range);
+                    }
+                }
+            });
+
+            // Execute the selected native command
+            if (commandName === 'heading1') {
+                ckeEditor.execute('heading', { value: 'heading1' });
+            } else if (commandName === 'heading2') {
+                ckeEditor.execute('heading', { value: 'heading2' });
+            } else if (commandName === 'heading3') {
+                ckeEditor.execute('heading', { value: 'heading3' });
+            } else {
+                ckeEditor.execute(commandName);
+            }
+
+            closeMenu();
+        }
+
+        // Wait for CKEditor to initialize (since window.editors is populated asynchronously)
+        const checkEditorInterval = setInterval(() => {
+            if (window.editors && window.editors['id_content']) {
+                clearInterval(checkEditorInterval);
+                ckeEditor = window.editors['id_content'];
+
+                // Grab the actual contenteditable container in the DOM
+                const editableElement = ckeEditor.ui.view.editable.element;
+
+                // Listen for keydown (for navigation and preventing default behaviors)
+                editableElement.addEventListener('keydown', (e) => {
+                    if (isMenuOpen) {
+                        if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            selectedIndex = (selectedIndex + 1) % menuItems.length;
+                            updateMenuSelection();
+                        } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            selectedIndex = (selectedIndex - 1 + menuItems.length) % menuItems.length;
+                            updateMenuSelection();
+                        } else if (e.key === 'Enter') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const command = menuItems[selectedIndex].getAttribute('data-command');
+                            executeCommand(command);
+                        } else if (e.key === 'Escape' || e.key === 'Backspace') {
+                            // Close menu on escape or if they hit backspace to delete the slash
+                            closeMenu();
+                        } else if (e.key === ' ') {
+                            // If they type a space after slash, they probably just want to type a slash.
+                            closeMenu();
+                        }
+                    }
+                });
+
+                // Listen for text input 
+                editableElement.addEventListener('keyup', (e) => {
+                    if (e.key === '/') {
+                        // Quick positioning hack: fetch window selection bounding rect
+                        const selection = window.getSelection();
+                        if (selection.rangeCount > 0) {
+                            const range = selection.getRangeAt(0).cloneRange();
+                            const rect = range.getBoundingClientRect();
+                            if (rect.x === 0 && rect.y === 0) {
+                                // Fallback positioning
+                                openMenu(e.clientX, e.clientY);
+                            } else {
+                                // Use rect relative to viewport, adjusted for scroll
+                                openMenu(rect.left + window.scrollX, rect.bottom + window.scrollY);
+                            }
+                        }
+                    }
+                });
+            }
+        }, 500);
+
+        // Click handlers for menu items
+        menuItems.forEach((item, index) => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const command = item.getAttribute('data-command');
+                executeCommand(command);
+            });
+            item.addEventListener('mouseenter', () => {
+                selectedIndex = index;
+                updateMenuSelection();
+            });
+        });
+
+        // Close menu if clicking outside
+        document.addEventListener('click', (e) => {
+            if (isMenuOpen && !slashMenu.contains(e.target) && !e.target.closest('.ck-editor')) {
+                closeMenu();
+            }
+        });
+    });
+</script>
 {% endblock %}

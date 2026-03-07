@@ -38,4 +38,9 @@ urlpatterns = [
 
    path('our-mission-values/', views.our_mission_values, name='our_mission_values'),
 
+     path('', views.home_view, name='home'),
+
+    path('contact-us/', views.contact_us, name='contact_us'),
+
+    path('our-team/', views.our_team, name='our_team'),
 ]

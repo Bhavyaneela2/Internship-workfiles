@@ -12,7 +12,7 @@ from .models import Blog, Project, Task, SubTask, Team
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import permission_required, user_passes_test
 from .models import CampusAmbassador
-
+from .models import PolicyReport
 
 @ensure_csrf_cookie
 def index(request):
@@ -995,6 +995,28 @@ def internships(request):
 def our_mission_values(request):
     return render(request, 'ourmission_values.html')
 
+
+def our_policies(request):
+    return render(request, "our_policies.html")
+
+def our_policies(request):
+
+    ethical = PolicyReport.objects.filter(category="ethical").first()
+    finance = PolicyReport.objects.filter(category="finance").first()
+    hr = PolicyReport.objects.filter(category="hr").first()
+    travel = PolicyReport.objects.filter(category="travel").first()
+    posh = PolicyReport.objects.filter(category="posh").first()
+
+    context = {
+        "ethical": ethical,
+        "finance": finance,
+        "hr": hr,
+        "travel": travel,
+        "posh": posh,
+    }
+
+    return render(request,"our_policies.html",context)
+
 # --- Phase: Move Admin to Portal ---
 from django.views.generic import ListView, UpdateView, CreateView
 from django.urls import reverse_lazy
@@ -1090,3 +1112,4 @@ class TeamUpdateView(UpdateView):
         context['page_title'] = f'Update Team: {self.object.name}'
         context['back_url'] = reverse_lazy('team_list')
         return context
+

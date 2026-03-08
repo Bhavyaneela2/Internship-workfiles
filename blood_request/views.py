@@ -992,11 +992,29 @@ def user_add(request):
 @login_required
 @user_passes_test(is_manager)
 def user_edit_portal(request, pk):
+    from django.contrib.auth.models import Group
+
     user_obj = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
         user_obj.first_name = request.POST.get('first_name')
         user_obj.last_name = request.POST.get('last_name')
         user_obj.email = request.POST.get('email')
+        
+        # Only allow superusers to modify access and roles
+        if request.user.is_superuser:
+            user_obj.is_staff = request.POST.get('is_staff') == 'on'
+            user_obj.is_superuser = request.POST.get('is_superuser') == 'on'
+            
+            # Handle group assignments
+            group_ids = request.POST.getlist('groups')
+            user_obj.groups.clear()
+            for group_id in group_ids:
+                try:
+                    group = Group.objects.get(id=group_id)
+                    user_obj.groups.add(group)
+                except Group.DoesNotExist:
+                    pass
+
         user_obj.save()
         
         # Phone
@@ -1007,8 +1025,16 @@ def user_edit_portal(request, pk):
         
         messages.success(request, f"User {user_obj.username} updated!")
         return redirect('user_list')
-        
-    return render(request, 'blood_request/user_edit.html', {'target_user': user_obj})
+
+    context = {
+        'target_user': user_obj,
+    }
+    
+    # Pass available groups if current user is superuser
+    if request.user.is_superuser:
+        context['all_groups'] = Group.objects.all()
+
+    return render(request, 'blood_request/user_edit.html', context)
 
 def volunteering(request):
     return render(request, "volunteering.html")

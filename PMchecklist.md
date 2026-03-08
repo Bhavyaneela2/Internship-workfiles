@@ -119,3 +119,27 @@ Phase 28: Immediate Wins (High Value / Low Effort)
  Hotkey 'C' to open Quick Add Task modal
  Recurring Tasks
  Add recurrence logic/cron job for Ops workloads
+
+---
+
+## 5. Competitive Feature Inspiration Checklist
+
+Based on NGO suitability and feasibility for our custom Django build, here are the target features inspired by industry tools:
+
+### CRITICAL Priority (Core Focus)
+- [ ] **Custom Blood/Campaign Workflows**: Tailored strictly to UDAAN's diverse campaigns.
+- [ ] **Admin Dashboard, CRM, and MIS**: Centralized control over records and data.
+
+### HIGH Priority (Highly Feasible & High Impact)
+- [ ] **Visual Boards & Task Automations** *(Inspired by Monday.com)*: Replicate board and automation logic using the Django framework.
+- [ ] **Simple Kanban Boards & Card Workflow** *(Inspired by Trello)*: Essential for non-technical managers (*Work In Progress*).
+- [ ] **Automated Daily "To-Do" Emails** *(Inspired by Asana)*: Use Python Signals/Celery to auto-send daily schedules to staff every morning.
+- [ ] **Task Comments & Discussions** *(Inspired by Freedcamp)*: Add a simple comments section to every task in the Dashboard to track project updates and reduce WhatsApp reliance.
+
+### MEDIUM Priority (Build the Core 20%)
+- [ ] **Goals, Budget Tracking & Custom Forms** *(Inspired by ClickUp)*: Implement monthly goals, basic reports, and feedback survey forms.
+- [ ] **Lifecycle & Event Tracking** *(Inspired by CiviCRM)*: Basic lifecycle tracking and event/membership hooks.
+- [ ] **Automated Thank-Yous & Volunteer Tracking** *(Inspired by Keela)*: Replicate trigger-based thank-you emails and specific volunteer growth features.
+- [ ] **Centralized Data Views** *(Inspired by Lark Base)*: Unified PostgreSQL database storing all tasks and staff records (*Implementation in Progress*).
+
+*(Note: Enterprise/Software-heavy features from Salesforce and Jira were excluded as Low Priority due to complexity and mismatch with NGO workflows.)*

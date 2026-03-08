@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.db.models import Q
 from django.views.decorators.csrf import ensure_csrf_cookie
-from .models import BloodDonor, BloodRequest
+from .models import BloodDonor, BloodRequest, Expense
 from .schemas import DonorSchema
 from pydantic import ValidationError
 # from django.shortcuts import render
@@ -1202,3 +1202,32 @@ class ExpenseUpdateView(UpdateView):
 
 def our_team(request):
     return render(request,"our_team.html")
+
+from django.contrib import messages
+
+def contact_us(request):
+    if request.method == "POST":
+        first_name = request.POST.get('first_name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        
+        if first_name and email and message:
+            ContactMessage.objects.create(
+                first_name=first_name,
+                email=email,
+                subject=subject,
+                message=message
+            )
+            messages.success(request, "Your message has been sent successfully!")
+            return redirect('contact_us')
+        else:
+            messages.error(request, "Please fill out all required fields.")
+            
+    return render(request, "contact_us.html")
+
+def faq(request):
+    return render(request, "faq.html")
+
+def our_partners(request):
+    return render(request, "our_partners.html")

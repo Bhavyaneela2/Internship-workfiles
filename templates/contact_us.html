@@ -34,14 +34,14 @@
 
 <section class="contact-wrapper">
 
-<div class="container">
+    <div class="container">
 
-<h2 class="contact-title">
-GET IN <span>TOUCH</span> WITH US & STAY <span>UPDATED</span>
-</h2>
+        <h2 class="contact-title">
+            GET IN <span>TOUCH</span> WITH US & STAY <span>UPDATED</span>
+        </h2>
 
 
-<div class="contact-grid">
+        <div class="contact-grid">
 
 
 </section>
@@ -49,97 +49,104 @@ GET IN <span>TOUCH</span> WITH US & STAY <span>UPDATED</span>
 
 <section class="contact-section">
 
-<div class="contact-container">
+    <div class="contact-container">
 
-<!-- LEFT SIDE -->
+        <!-- LEFT SIDE -->
 
-<div class="contact-left">
+        <div class="contact-left">
 
-<div class="contact-item">
-<div class="icon-circle blue">
-<i class="fa-solid fa-location-dot"></i>
-</div>
+            <div class="contact-item">
+                <div class="icon-circle blue">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
 
-<div class="contact-text">
-<h3>Working Office</h3>
-<p>
-Near World Bank Colony, Baraula Bypass, Aligarh,
-Uttar Pradesh (India) - 202001
-</p>
-</div>
-</div>
-
-
-<div class="contact-item">
-<div class="icon-circle green">
-<i class="fa-solid fa-envelope"></i>
-</div>
-
-<div class="contact-text">
-<h3>Email</h3>
-<p>mail@udaansociety.org</p>
-</div>
-</div>
+                <div class="contact-text">
+                    <h3>Working Office</h3>
+                    <p>
+                        Near World Bank Colony, Baraula Bypass, Aligarh,
+                        Uttar Pradesh (India) - 202001
+                    </p>
+                </div>
+            </div>
 
 
-<div class="contact-item">
-<div class="icon-circle orange">
-<i class="fa-solid fa-phone"></i>
-</div>
+            <div class="contact-item">
+                <div class="icon-circle green">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
 
-<div class="contact-text">
-<h3>Phone</h3>
-<p>+91 9837067681</p>
-</div>
-</div>
-
-</div>
+                <div class="contact-text">
+                    <h3>Email</h3>
+                    <p>mail@udaansociety.org</p>
+                </div>
+            </div>
 
 
-<!-- RIGHT SIDE -->
+            <div class="contact-item">
+                <div class="icon-circle orange">
+                    <i class="fa-solid fa-phone"></i>
+                </div>
 
-<div class="contact-right">
+                <div class="contact-text">
+                    <h3>Phone</h3>
+                    <p>+91 9837067681</p>
+                </div>
+            </div>
 
-<h2>Leave us a message</h2>
+        </div>
 
-<form class="contact-form">
 
-<input type="text" placeholder="First Name">
+        <!-- RIGHT SIDE -->
 
-<input type="email" placeholder="Email Address">
+        <div class="contact-right">
 
-<input type="text" placeholder="Subject">
+            <h2>Leave us a message</h2>
 
-<textarea placeholder="Your Message"></textarea>
+            <form class="contact-form" method="POST" action="{% url 'contact_us' %}">
+                {% csrf_token %}
 
-<button class="submit-btn">SUBMIT</button>
+                {% if messages %}
+                <div class="messages mb-4">
+                    {% for message in messages %}
+                    <div
+                        class="p-3 mb-2 rounded {% if message.tags == 'success' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-</form>
+                <input type="text" name="first_name" placeholder="First Name" required>
 
-</div>
+                <input type="email" name="email" placeholder="Email Address" required>
 
-</div>
+                <input type="text" name="subject" placeholder="Subject">
+
+                <textarea name="message" placeholder="Your Message" required></textarea>
+
+                <button type="submit" class="submit-btn">SUBMIT</button>
+
+            </form>
+
+        </div>
+
+    </div>
 
 </section>
 
 <section class="map-section">
 
-<div class="container">
+    <div class="container">
 
-<div class="map-wrapper">
+        <div class="map-wrapper">
 
-<iframe
-src="https://maps.google.com/maps?q=Aligarh%20Uttar%20Pradesh&t=&z=12&ie=UTF8&iwloc=&output=embed"
-width="100%"
-height="500"
-style="border:0;"
-loading="lazy"
-referrerpolicy="no-referrer-when-downgrade">
-</iframe>
+            <iframe src="https://maps.google.com/maps?q=Aligarh%20Uttar%20Pradesh&t=&z=12&ie=UTF8&iwloc=&output=embed"
+                width="100%" height="500" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
 </section>
 

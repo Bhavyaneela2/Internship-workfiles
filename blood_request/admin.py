@@ -6,7 +6,7 @@ from .models import PolicyReport
 from .models import (
     BloodDonor, BloodRequest, Campaign, Report, Project, Task, SubTask,
     Announcement, Testimonial, StaffProfile, Interaction, Appointment,
-    PersonalNote, Team, SharedNote, NewsClipping, Blog, Expense
+    PersonalNote, Team, SharedNote, NewsClipping, Blog, Expense, ContactMessage
 )
 
 @admin.register(PolicyReport)
@@ -118,4 +118,13 @@ class NewsClippingAdmin(admin.ModelAdmin):
     list_display = ('title', 'newspaper', 'date_display', 'created_at')
     search_fields = ('title', 'newspaper')
 
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'email', 'subject', 'is_read', 'created_at')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('first_name', 'email', 'subject')
+    actions = ['mark_as_read']
 
+    def mark_as_read(self, request, queryset):
+        queryset.update(is_read=True)
+    mark_as_read.short_description = "Mark selected messages as read"

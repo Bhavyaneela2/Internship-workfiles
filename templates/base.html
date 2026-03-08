@@ -57,41 +57,26 @@
                 <span class="bar"></span>
                 <span class="bar"></span>
             </button>
-
             <ul class="nav-menu">
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         Who We Are <span class="dropdown-arrow">▼</span>
                     </a>
                     <div class="dropdown-menu">
-            <a href="#" class="dropdown-item">About</a>
-            <a href="{% url 'our_mission_values' %}"  class="dropdown-item">Our Mission & Values</a>
-            <a href="#" class="dropdown-item">Appreciation and Accolades</a>
-            <a href="#" class="dropdown-item">Our Partners</a>
-            <a href="{% url 'our_policies' %}" class="dropdown-item">Our Policies</a>
-            <a href="{% url 'contact_us' %}" class="dropdown-item">
-            Contact Us
-            </a>
-
-            <a href="{% url 'our_team' %}" class="dropdown-item">
-                Our Team
-            </a>
-
-            <a href="#" class="dropdown-item">FAQs</a>
-          
-
                         <a href="{% url 'aboutus' %}" class="dropdown-item">About</a>
                         <a href="{% url 'our_mission_values' %}" class="dropdown-item">Our Mission & Values</a>
                         <a href="#" class="dropdown-item">Appreciation and Accolades</a>
-                        <a href="#" class="dropdown-item">Our Partners</a>
+                        <a href="{% url 'our_partners' %}" class="dropdown-item">Our Partners</a>
                         <a href="{% url 'our_policies' %}" class="dropdown-item">Our Policies</a>
-                        <a href="#" class="dropdown-item">Contact Us</a>
-                        <a href="#" class="dropdown-item">Our Team</a>
-                        <a href="#" class="dropdown-item">FAQs</a>
+                        <a href="{% url 'contact_us' %}" class="dropdown-item">
+                            Contact Us
+                        </a>
 
-                        <!-- Admin Link for Reference, hidden usually or styled differently -->
-                        <a href="/admin/" target="_blank" class="dropdown-item"
-                            style="color: #ccc; font-size: 11px;">Admin Panel</a>
+                        <a href="{% url 'our_team' %}" class="dropdown-item">
+                            Our Team
+                        </a>
+
+                        <a href="{% url 'faq' %}" class="dropdown-item">FAQs</a>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -99,12 +84,32 @@
                         Make a Difference <span class="dropdown-arrow">▼</span>
                     </a>
                     <div class="dropdown-menu">
-                        <a href="{% url 'career_fellowship' %}" class="dropdown-item">Career and Fellowship</a>
-                        <a href="{% url 'workplace_living' %}" class="dropdown-item">Workplace Giving</a>
-                        <a href="{% url 'volunteering' %}" class="dropdown-item">Volunteering</a>
-                        <a href="{% url 'internships' %}" class="dropdown-item">Internships</a>
-                        <a href="{% url 'campus_ambassador' %}" class="dropdown-item">Campus Ambassador</a>
-                        <a href="{% url 'jobs' %}" class="dropdown-item">Jobs at UDAAN Society</a>
+                        <a href="{% url 'career_fellowship' %}" class="dropdown-item">
+                            Career and Fellowship
+                        </a>
+
+                        <a href="{% url 'workplace_living' %}" class="dropdown-item">
+                            Workplace Giving
+                        </a>
+
+                        <a href="{% url 'volunteering' %}" class="dropdown-item">
+                            Volunteering
+                        </a>
+
+                        <a href="{% url 'internships' %}" class="dropdown-item">
+                            Internships
+                        </a>
+
+                        <a href="{% url 'campus_ambassador' %}" class="dropdown-item">
+                            Campus Ambassador
+                        </a>
+
+                        <a href="{% url 'jobs' %}" class="dropdown-item">
+                            Jobs at UDAAN Society
+                        </a>
+
+
+
                     </div>
                 </li>
                 <li class="nav-item">
@@ -129,12 +134,12 @@
                 </li>
                 <li class="nav-item">
                     <a href="#" class="donate-btn">
-                        📱 Donate Now <span>Secured by RazorPay</span>
-                    </a>
+                        📱 Donate Now <span>Secured by RazorPay</span></a>
                 </li>
             </ul>
         </div>
     </nav>
+
 
     <!-- Main Content -->
     <main class="flex-grow">

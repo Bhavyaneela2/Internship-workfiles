@@ -73,10 +73,6 @@ urlpatterns = [
     path('tasks/create/', views.task_create, name='task_create'),
     path('blogs/create/', views.blog_create, name='blog_create'),
 
-      path('admin/', admin.site.urls),
-
-    path('', include('blood_request.urls')),
-
     path('news-clippings/', views.news_clippings, name='news_clippings'),
     path("policies/", views.our_policies, name="our_policies"),
 

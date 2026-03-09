@@ -128,7 +128,8 @@
                     class="w-[22px] h-[22px] rounded bg-white border border-[#e1e1e0] shadow-sm text-[#37352f] flex items-center justify-center font-bold text-[11px] shrink-0">
                     {{ request.user.username|slice:":1"|upper }}
                 </div>
-                <span class="sidebar-workspace-name text-[14px] font-medium text-[#37352f] truncate leading-tight mt-0.5"
+                <span
+                    class="sidebar-workspace-name text-[14px] font-medium text-[#37352f] truncate leading-tight mt-0.5"
                     style="font-family: 'Inter', sans-serif;">
                     {% if request.user.first_name %}{{ request.user.first_name }}'s Workspace{% else %}{{
                     request.user.username }}'s Workspace{% endif %}
@@ -248,6 +249,31 @@
                     class="fa-solid fa-file-invoice-dollar w-4 h-4 mr-2.5 opacity-70 flex items-center justify-center text-[12px]"></i>
                 <span class="sidebar-label whitespace-nowrap">Expenses</span>
             </a>
+
+            <!-- Workflow & Automation Links -->
+            <a href="{% url 'automation_rule_list' %}"
+                class="w-full flex items-center px-2 py-1 hover:bg-[#efefed] rounded-md text-[14px] transition-colors {% if 'automations' in request.path %}bg-[#efefed] font-medium text-[#37352f]{% else %}font-medium{% endif %}"
+                title="Automation Rules">
+                <i
+                    class="fa-solid fa-bolt w-4 h-4 mr-2.5 opacity-70 flex items-center justify-center text-[12px] text-yellow-600"></i>
+                <span class="sidebar-label whitespace-nowrap">Automations</span>
+            </a>
+
+            <a href="{% url 'send_digest_portal' %}"
+                class="w-full flex items-center px-2 py-1 hover:bg-[#efefed] rounded-md text-[14px] transition-colors {% if 'digest' in request.path %}bg-[#efefed] font-medium text-[#37352f]{% else %}font-medium{% endif %}"
+                title="Send Daily Digest">
+                <i
+                    class="fa-solid fa-envelope w-4 h-4 mr-2.5 opacity-70 flex items-center justify-center text-[12px] text-blue-600"></i>
+                <span class="sidebar-label whitespace-nowrap">Daily Digest</span>
+            </a>
+
+            <a href="{% url 'export_tasks_pdf' %}"
+                class="w-full flex items-center px-2 py-1 hover:bg-[#efefed] rounded-md text-[14px] transition-colors"
+                title="Export Tasks (PDF)">
+                <i
+                    class="fa-solid fa-file-pdf w-4 h-4 mr-2.5 opacity-70 flex items-center justify-center text-[12px] text-red-600"></i>
+                <span class="sidebar-label whitespace-nowrap">Export Tasks</span>
+            </a>
             {% endif %}
 
             {% if perms.blood_request.view_sharednote %}
@@ -365,8 +391,7 @@
             <a href="{% url 'home' %}"
                 class="sidebar-footer-btn flex items-center justify-center w-full px-4 py-2 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors mb-2"
                 title="Visit Public Site">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                 </svg>
@@ -376,8 +401,7 @@
             <button onclick="toggleNotifPanel()"
                 class="sidebar-footer-btn relative mt-2 flex items-center justify-center w-full px-4 py-2 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 title="Notifications">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15 17h5l-1.405-2.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
                     </path>

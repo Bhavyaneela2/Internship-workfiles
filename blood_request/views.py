@@ -1,3 +1,4 @@
+
 import json
 from django.contrib.auth.models import User
 from django.shortcuts import render
@@ -6,7 +7,8 @@ from django.db.models import Q
 from django.views.decorators.csrf import ensure_csrf_cookie
 from .models import (
     BloodDonor, BloodRequest, ContactMessage, Report, Campaign, Task, StaffProfile, SubTask, 
-    Interaction, Project, NewsClipping, Team, SharedNote, Workspace, Notification, Expense, TaskComment
+    Interaction, Project, NewsClipping, Team, SharedNote, Workspace, Notification, Expense, TaskComment,
+    TaskAutomationRule
 )
 from .schemas import DonorSchema
 from pydantic import ValidationError
@@ -1309,3 +1311,175 @@ def our_activities(request):
     from .models import Activity
     activities = Activity.objects.filter(is_active=True)
     return render(request, "ouractivites.html", {"activities": activities})
+
+
+# --- Phase 29 Portal UI: Automation Rules, Digest, PDF Export ---
+
+# Automation Rules CRUD
+@method_decorator(user_passes_test(is_manager), name='dispatch')
+class AutomationRuleListView(ListView):
+    model = TaskAutomationRule
+    template_name = 'blood_request/portal_automation_list.html'
+    context_object_name = 'rules'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Automation Rules'
+        return context
+
+@method_decorator(user_passes_test(is_manager), name='dispatch')
+class AutomationRuleCreateView(CreateView):
+    model = TaskAutomationRule
+    fields = ['name', 'trigger_type', 'action_type', 'target_user', 'is_active']
+    template_name = 'blood_request/portal_form.html'
+    success_url = reverse_lazy('automation_rule_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Create Automation Rule'
+        context['back_url'] = reverse_lazy('automation_rule_list')
+        return context
+
+@method_decorator(user_passes_test(is_manager), name='dispatch')
+class AutomationRuleUpdateView(UpdateView):
+    model = TaskAutomationRule
+    fields = ['name', 'trigger_type', 'action_type', 'target_user', 'is_active']
+    template_name = 'blood_request/portal_form.html'
+    success_url = reverse_lazy('automation_rule_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Edit Automation Rule'
+        context['back_url'] = reverse_lazy('automation_rule_list')
+        return context
+
+@login_required
+@user_passes_test(is_manager)
+def automation_rule_delete(request, pk):
+    rule = get_object_or_404(TaskAutomationRule, pk=pk)
+    if request.method == 'POST':
+        rule.delete()
+        messages.success(request, f"Rule '{rule.name}' deleted.")
+        return redirect('automation_rule_list')
+    return render(request, 'blood_request/portal_confirm_delete.html', {
+        'object': rule,
+        'page_title': 'Delete Automation Rule',
+        'back_url': 'automation_rule_list',
+    })
+
+# Send Digest from Portal UI
+@login_required
+@user_passes_test(is_manager)
+def send_digest_portal(request):
+    """Allows a manager to send the daily digest email to all staff from the portal."""
+    from django.core.mail import send_mail
+    from django.template.loader import render_to_string
+    from datetime import date
+    
+    preview_users = []
+    
+    if request.method == 'POST':
+        staff_users = User.objects.filter(is_active=True, is_staff=True)
+        emails_sent = 0
+        
+        for user in staff_users:
+            if not user.email:
+                continue
+                
+            tasks = Task.objects.filter(
+                assigned_to=user,
+                status__in=['To Do', 'In Progress']
+            ).order_by('due_date', '-priority')
+            
+            if not tasks.exists():
+                continue
+            
+            html_message = render_to_string(
+                'blood_request/emails/daily_digest.html',
+                {'user': user, 'tasks': tasks, 'today': date.today()}
+            )
+            
+            plain_message = f"Hello {user.first_name or user.username}, you have {tasks.count()} pending tasks."
+            
+            try:
+                send_mail(
+                    subject=f"UDAAN Tasks Daily Digest - {date.today().strftime('%b %d, %Y')}",
+                    message=plain_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user.email],
+                    html_message=html_message,
+                    fail_silently=False,
+                )
+                emails_sent += 1
+            except Exception as e:
+                messages.warning(request, f"Failed to send to {user.username}: {str(e)}")
+        
+        messages.success(request, f"Daily digest sent to {emails_sent} staff member(s)!")
+        return redirect('send_digest_portal')
+    
+    # GET: Show preview of who will receive
+    staff_users = User.objects.filter(is_active=True, is_staff=True)
+    for user in staff_users:
+        tasks = Task.objects.filter(assigned_to=user, status__in=['To Do', 'In Progress'])
+        if tasks.exists() and user.email:
+            preview_users.append({
+                'user': user,
+                'task_count': tasks.count(),
+                'email': user.email,
+            })
+    
+    return render(request, 'blood_request/portal_send_digest.html', {
+        'preview_users': preview_users,
+        'page_title': 'Send Daily Digest',
+    })
+
+# Export Tasks as PDF
+@login_required
+@user_passes_test(is_manager)
+def export_tasks_pdf(request):
+    """Export all tasks as a styled PDF document."""
+    from io import BytesIO
+    from django.template.loader import render_to_string
+    from datetime import date
+    
+    tasks = Task.objects.all().order_by('status', '-priority', 'due_date')
+    
+    # We'll use HTML-to-PDF approach with weasyprint if available, 
+    # otherwise fall back to CSV
+    try:
+        from weasyprint import HTML
+        
+        html_string = render_to_string('blood_request/exports/tasks_pdf.html', {
+            'tasks': tasks,
+            'today': date.today(),
+            'generated_by': request.user,
+        })
+        
+        pdf_file = BytesIO()
+        HTML(string=html_string).write_pdf(pdf_file)
+        pdf_file.seek(0)
+        
+        response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="UDAAN_Tasks_Report_{date.today()}.pdf"'
+        return response
+        
+    except ImportError:
+        # Fallback: Generate a clean CSV if weasyprint is not installed
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="UDAAN_Tasks_Report_{date.today()}.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow(['Title', 'Status', 'Priority', 'Assigned To', 'Project', 'Due Date', 'Created At'])
+        
+        for task in tasks:
+            writer.writerow([
+                task.title,
+                task.status,
+                task.priority,
+                task.assigned_to.username if task.assigned_to else 'Unassigned',
+                task.project.title if task.project else 'General',
+                task.due_date if task.due_date else '-',
+                task.created_at.strftime('%Y-%m-%d'),
+            ])
+        
+        return response

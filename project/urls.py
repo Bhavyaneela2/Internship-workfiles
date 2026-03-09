@@ -40,6 +40,14 @@ urlpatterns = [
     path("admin/portal/expenses/", views.ExpenseListView.as_view(), name="expense_list_portal"),
     path("admin/portal/expenses/create/", views.ExpenseCreateView.as_view(), name="expense_create_portal"),
     path("admin/portal/expenses/<int:pk>/edit/", views.ExpenseUpdateView.as_view(), name="expense_update_portal"),
+    
+    path("admin/portal/automations/", views.AutomationRuleListView.as_view(), name="automation_rule_list"),
+    path("admin/portal/automations/create/", views.AutomationRuleCreateView.as_view(), name="automation_rule_create"),
+    path("admin/portal/automations/<int:pk>/edit/", views.AutomationRuleUpdateView.as_view(), name="automation_rule_update"),
+    path("admin/portal/automations/<int:pk>/delete/", views.automation_rule_delete, name="automation_rule_delete"),
+    path("admin/portal/digest/", views.send_digest_portal, name="send_digest_portal"),
+    path("admin/portal/export/tasks/", views.export_tasks_pdf, name="export_tasks_pdf"),
+    
     path("admin/portal/", staff_dashboard, name="staff_dashboard"),
     path("admin/portal/profile/", profile_edit, name="profile_edit"),
     path("admin/export/donors/", export_donors_csv, name="export_donors_csv"),

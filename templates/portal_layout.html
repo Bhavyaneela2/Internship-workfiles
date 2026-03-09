@@ -35,6 +35,45 @@
             border-right: 3px solid #1D3557;
         }
 
+        /* Collapsed sidebar: hide all text labels, center icons */
+        .notion-sidebar.collapsed .sidebar-label,
+        .notion-sidebar.collapsed .sidebar-section-header,
+        .notion-sidebar.collapsed .sidebar-wiki-tree,
+        .notion-sidebar.collapsed .sidebar-workspace-name {
+            display: none !important;
+        }
+
+        .notion-sidebar.collapsed nav a,
+        .notion-sidebar.collapsed nav button {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .notion-sidebar.collapsed nav a svg,
+        .notion-sidebar.collapsed nav a i,
+        .notion-sidebar.collapsed nav button svg {
+            margin-right: 0 !important;
+        }
+
+        .notion-sidebar.collapsed .sidebar-workspace-switcher {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .notion-sidebar.collapsed .sidebar-footer-btn span {
+            display: none !important;
+        }
+
+        .notion-sidebar.collapsed .sidebar-footer-btn {
+            justify-content: center;
+        }
+
+        .notion-sidebar.collapsed .sidebar-footer-btn svg {
+            margin-right: 0 !important;
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
@@ -78,18 +117,18 @@
 
     <!-- SIDEBAR -->
     <aside
-        class="notion-sidebar flex flex-col h-full z-20 flex-shrink-0 transition-all duration-300 transform -translate-x-full md:translate-x-0 fixed md:relative w-64 group/sidebar"
+        class="notion-sidebar flex flex-col h-full z-20 flex-shrink-0 transition-all duration-300 transform -translate-x-full md:translate-x-0 fixed md:relative w-64 overflow-hidden"
         id="sidebar">
 
         <!-- Workspace Switcher (Notion-style Top Nav) -->
-        <div class="h-[45px] hover:bg-[#efefed] transition-colors flex items-center px-4 cursor-pointer mt-2 mx-2 rounded-md justify-between shrink-0 group/workspace"
+        <div class="sidebar-workspace-switcher h-[45px] hover:bg-[#efefed] transition-colors flex items-center px-4 cursor-pointer mt-2 mx-2 rounded-md justify-between shrink-0 group/workspace"
             onclick="toggleProfileDropdown()">
             <div class="flex items-center space-x-2 truncate">
                 <div
                     class="w-[22px] h-[22px] rounded bg-white border border-[#e1e1e0] shadow-sm text-[#37352f] flex items-center justify-center font-bold text-[11px] shrink-0">
                     {{ request.user.username|slice:":1"|upper }}
                 </div>
-                <span class="text-[14px] font-medium text-[#37352f] truncate leading-tight mt-0.5"
+                <span class="sidebar-workspace-name text-[14px] font-medium text-[#37352f] truncate leading-tight mt-0.5"
                     style="font-family: 'Inter', sans-serif;">
                     {% if request.user.first_name %}{{ request.user.first_name }}'s Workspace{% else %}{{
                     request.user.username }}'s Workspace{% endif %}
@@ -118,7 +157,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
-                <span class="flex-1 text-left font-medium">Search</span>
+                <span class="sidebar-label flex-1 text-left font-medium">Search</span>
             </button>
 
             <a href="{% url 'staff_dashboard' %}"
@@ -129,7 +168,7 @@
                         d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
                     </path>
                 </svg>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Home</span>
+                <span class="sidebar-label whitespace-nowrap">Home</span>
             </a>
 
             <a href="{% url 'workspace_list' %}"
@@ -140,7 +179,7 @@
                         d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
                     </path>
                 </svg>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Inbox</span>
+                <span class="sidebar-label whitespace-nowrap">Inbox</span>
             </a>
 
             {% if perms.blood_request.add_task %}
@@ -152,7 +191,7 @@
                         d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
                     </path>
                 </svg>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Dashboard</span>
+                <span class="sidebar-label whitespace-nowrap">Dashboard</span>
             </a>
             {% endif %}
 
@@ -164,7 +203,7 @@
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                     </path>
                 </svg>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Calendar & Appointments</span>
+                <span class="sidebar-label whitespace-nowrap">Calendar & Appointments</span>
             </a>
 
             <!-- Database Management Links -->
@@ -174,7 +213,7 @@
                 title="Activity Timeline">
                 <i
                     class="fa-solid fa-clock-rotate-left w-4 h-4 mr-2.5 opacity-70 flex items-center justify-center text-xs"></i>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Activity Timeline</span>
+                <span class="sidebar-label whitespace-nowrap">Activity Timeline</span>
             </a>
 
             <a href="{% url 'task_list_portal' %}"
@@ -182,7 +221,7 @@
                 title="Tasks">
                 <i
                     class="fa-solid fa-list-check w-4 h-4 mr-2.5 opacity-70 flex items-center justify-center text-xs"></i>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Tasks</span>
+                <span class="sidebar-label whitespace-nowrap">Tasks</span>
             </a>
 
             <a href="{% url 'subtask_list_portal' %}"
@@ -190,7 +229,7 @@
                 title="Sub Tasks">
                 <i
                     class="fa-solid fa-diagram-project w-4 h-4 mr-2.5 opacity-70 flex items-center justify-center text-xs"></i>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Sub Tasks</span>
+                <span class="sidebar-label whitespace-nowrap">Sub Tasks</span>
             </a>
 
             <a href="{% url 'team_list' %}"
@@ -198,7 +237,7 @@
                 title="Teams">
                 <i
                     class="fa-solid fa-users-viewfinder w-4 h-4 mr-2.5 opacity-70 flex items-center justify-center text-[11px]"></i>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Teams</span>
+                <span class="sidebar-label whitespace-nowrap">Teams</span>
             </a>
 
             <a href="{% url 'expense_list_portal' %}"
@@ -206,17 +245,17 @@
                 title="Expenses">
                 <i
                     class="fa-solid fa-file-invoice-dollar w-4 h-4 mr-2.5 opacity-70 flex items-center justify-center text-[12px]"></i>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Expenses</span>
+                <span class="sidebar-label whitespace-nowrap">Expenses</span>
             </a>
 
             <a href="{% url 'shared_note_list' %}"
                 class="w-full flex items-center px-2 py-1 hover:bg-[#efefed] rounded-md text-[14px] transition-colors {% if 'shared-notes' in request.path %}bg-[#efefed] font-medium text-[#37352f]{% else %}font-medium{% endif %}"
                 title="Shared Notes">
                 <i class="fa-solid fa-book-open w-4 h-4 mr-2.5 opacity-70 flex items-center justify-center text-xs"></i>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Shared Notes</span>
+                <span class="sidebar-label whitespace-nowrap">Shared Notes</span>
             </a>
 
-            <div class="mt-4 mb-1">
+            <div class="sidebar-section-header mt-4 mb-1">
                 <div
                     class="flex items-center justify-between px-2 group/header hover:bg-[#efefed] rounded-sm cursor-pointer py-0.5">
                     <span
@@ -237,11 +276,11 @@
                         d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
                     </path>
                 </svg>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Personal Scratchpad</span>
+                <span class="sidebar-label whitespace-nowrap">Personal Scratchpad</span>
             </a>
 
             <!-- Shared Notes / Wiki Tree -->
-            <div class="group-[.collapsed]/sidebar:hidden mb-4">
+            <div class="sidebar-wiki-tree mb-4">
                 {% if shared_notes_tree %}
                 <div class="mt-0.5 space-y-0.5">
                     {% for note in shared_notes_tree %}
@@ -285,7 +324,7 @@
                 {% endif %}
 
 
-                <div class="mt-4 mb-1">
+                <div class="sidebar-section-header mt-4 mb-1">
                     <div
                         class="flex items-center justify-between px-2 group/header hover:bg-[#efefed] rounded-sm cursor-pointer py-0.5">
                         <span
@@ -318,28 +357,28 @@
         </div>
 
         <!-- Footer Actions -->
-        <div class="p-4 border-t border-gray-100 shrink-0 group-[.collapsed]/sidebar:p-2">
+        <div class="p-4 border-t border-gray-100 shrink-0">
             <a href="{% url 'home' %}"
-                class="flex items-center justify-center w-full px-4 py-2 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors mb-2 group-[.collapsed]/sidebar:px-2"
+                class="sidebar-footer-btn flex items-center justify-center w-full px-4 py-2 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors mb-2"
                 title="Visit Public Site">
-                <svg class="w-4 h-4 mr-2 group-[.collapsed]/sidebar:mr-0" fill="none" stroke="currentColor"
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                 </svg>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Visit Public Site</span>
+                <span class="whitespace-nowrap">Visit Public Site</span>
             </a>
             <!-- Desktop Notification Bell -->
             <button onclick="toggleNotifPanel()"
-                class="relative mt-2 flex items-center justify-center w-full px-4 py-2 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group-[.collapsed]/sidebar:px-2"
+                class="sidebar-footer-btn relative mt-2 flex items-center justify-center w-full px-4 py-2 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 title="Notifications">
-                <svg class="w-4 h-4 mr-2 group-[.collapsed]/sidebar:mr-0" fill="none" stroke="currentColor"
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15 17h5l-1.405-2.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
                     </path>
                 </svg>
-                <span class="group-[.collapsed]/sidebar:hidden whitespace-nowrap">Notifications</span>
+                <span class="whitespace-nowrap">Notifications</span>
                 <span id="notif-count-badge"
                     class="ml-auto bg-brand-red text-white text-[10px] rounded-full px-1.5 py-0.5 hidden">0</span>
             </button>

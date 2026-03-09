@@ -101,7 +101,7 @@
                 <label class="flex items-center cursor-pointer flex-1">
                     <input type="checkbox"
                         class="w-5 h-5 text-brand-red border-gray-300 rounded focus:ring-brand-red cursor-pointer transition-colors subtask-checkbox"
-                        data-id="{{ sub.id }}" {% if sub.status=='Done' %}checked{% endif %}>
+                        data-id="{{ sub.id }}" {% if sub.status == 'Done' %}checked{% endif %}>
                     <span
                         class="ml-3 text-sm font-medium {% if sub.status == 'Done' %}text-gray-400 line-through{% else %}text-gray-700{% endif %} transition-all subtask-title">{{
                         sub.title }}</span>

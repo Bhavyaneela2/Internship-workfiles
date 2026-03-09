@@ -1303,4 +1303,6 @@ def appreciationandaccolades(request):
     return render(request, "appreciationandaccolades.html")
 
 def our_activities(request):
-    return render(request, "ouractivites.html")
+    from .models import Activity
+    activities = Activity.objects.filter(is_active=True)
+    return render(request, "ouractivites.html", {"activities": activities})
